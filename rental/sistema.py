@@ -7,10 +7,10 @@ from rental.real_estate import real_estate
 from rental.extract import Extract
 from rental.guarantor import Guarantor
 from rental.bail_insurance import BailInsurance
-from tabulate import tabulate
 
 from utils.numbersProcessing import format_phone
 from utils.dateProcessing import iso_para_formatado
+from utils import visualization
 
 class RentalSystem:
     def __init__(self, data_folder):
@@ -157,161 +157,100 @@ class RentalSystem:
         return self.bail_insurances.get(bail_insurance_id)
     
     # ===============================
-    # Métodos de visualização (refatorados)
+    # Métodos de filtragem
+    # ===============================
+
+    # --- Tenants ---
+    def get_active_tenants(self):
+        active_ids = {c.tenant_id for c in self.contracts.values() if c.acting}
+        return {id_: t for id_, t in self.tenants.items() if id_ in active_ids}
+
+    # --- Properties ---
+    def get_active_properties(self):
+        active_ids = {c.property_id for c in self.contracts.values() if c.acting}
+        return {id_: p for id_, p in self.properties.items() if id_ in active_ids}
+    
+    # --- Contracts ---
+    def get_active_contracts(self):
+        return [c for c in self.contracts.values() if c.acting]
+
+    # --- Real Estates ---
+    def get_active_real_estates(self):
+        active_ids = {c.real_estate_id for c in self.contracts.values() if c.acting}
+        return {id_: r for id_, r in self.agencies.items() if id_ in active_ids}
+    
+    # --- Payments ---
+    def get_active_payments(self):
+        active_ids = {c.id for c in self.contracts.values() if c.acting}
+        return [p for p in self.payments.values() if p.contract_id in active_ids]
+    
+    # --- Extracts ---
+    def get_active_extracts(self):
+        active_ids = {c.id for c in self.contracts.values() if c.acting}
+        return [e for e in self.extracts.values() if e.contract_id in active_ids]
+
+    # --- Guarantors ---
+    def get_active_guarantors(self):
+        active_ids = {c.guarantor_id for c in self.contracts.values()
+                    if c.acting and hasattr(c, 'guarantor_id') and c.guarantor_id}
+        return {id_: g for id_, g in self.guarantors.items() if id_ in active_ids}
+
+    # --- Bail Insurances ---
+    def get_active_bail_insurances(self):
+        active_ids = {c.bail_insurance_id for c in self.contracts.values()
+                    if c.acting and hasattr(c, 'bail_insurance_id') and c.bail_insurance_id}
+        return {id_: b for id_, b in self.bail_insurances.items() if id_ in active_ids}
+    
+    # ===============================
+    # Métodos de visualização
     # ===============================
 
     def show_tenants(self, only_acting=False):
-        print("\n-- INQUILINOS --")
         tenants = list(self.tenants.values())
         if only_acting:
-            active_ids = {c.tenant_id for c in self.contracts.values()}
-            tenants = [t for t in tenants if t.id in active_ids]
-        
-        # Adiciona numeração começando em 1
-        numbered_data = [
-            [i+1, t.name, t.cpf, t.cnpj] 
-            for i, t in enumerate(tenants)
-        ]
-        
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Nome", "CPF", "CNPJ"],
-            showindex=False
-        ))
+            tenants = self.get_active_tenants().values()
+        visualization.show_tenants(tenants)
 
     def show_properties(self, only_acting=False):
-        print("\n-- IMÓVEIS --")
         properties = list(self.properties.values())
         if only_acting:
-            active_ids = {c.property_id for c in self.contracts.values()}
-            properties = [p for p in properties if p.id in active_ids]
-            
-        numbered_data = [
-            [i+1, p.property_name, p.owner_name, p.address, p.room_count] 
-            for i, p in enumerate(properties)
-        ]
-        
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Nome", "Proprietário", "Endereço", "Quantidade de Salas"],
-            showindex=False
-        ))
+            properties = self.get_active_properties().values()
+        visualization.show_properties(properties)
 
     def show_contracts(self, only_acting=False):
-        print("\n-- CONTRATOS --")
         contracts = list(self.contracts.values())
         if only_acting:
-            contracts = [c for c in contracts if c.acting]
+            contracts = self.get_active_contracts()
             
-        numbered_data = [
-            [i+1, self.find_tenant_by_id(c.tenant_id).name, self.find_real_estate_by_id(c.real_estate_id).name, self.find_property_by_id(c.property_id).property_name, c.rent_amount, c.rental_deposit, c.room_name, c.file_path]
-            for i, c in enumerate(contracts)
-        ]
-        
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Inquilino", "Imobiliária", "Imóvel", "Aluguel", "Caução", "Sala", "Arquivo"],
-            showindex=False
-        ))
+        visualization.show_contracts(contracts, self.find_tenant_by_id, self.find_real_estate_by_id, self.find_property_by_id)
 
     def show_payments(self, only_acting=False):
-        print("\n-- PAGAMENTOS --")
         payments = list(self.payments.values())
         if only_acting:
-            active_tenants = {c.tenant_id for c in self.contracts.values() if c.acting}
-            payments = [p for p in payments if p.tenant_id in active_tenants]
-        
-        numbered_data = []
-        for i, p in enumerate(payments):
-            contract = self.find_contract_by_id(p.contract_id)
-            numbered_data.append([
-                i + 1,
-                self.find_tenant_by_id(contract.tenant_id).name,
-                self.find_real_estate_by_id(contract.real_estate_id).name,
-                self.find_property_by_id(contract.property_id).property_name,
-                p.month_ref,
-                p.year_ref,
-                iso_para_formatado(p.payment_date),
-                p.receipt_path
-            ])
-        
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Inquilino", "Imobiliária", "Imóvel", "Mês", "Ano", "Data do cadastro", "Comprovante"],
-            showindex=False
-        ))
+            payments = self.get_active_payments()
+        visualization.show_payments(payments, self.find_tenant_by_id, self.find_property_by_id, self.find_real_estate_by_id)
 
     def show_real_states(self, only_acting=False):
-        print("\n-- IMOBILIÁRIAS --")
-        agencies = list(self.agencies.values())
+        real_states = list(self.agencies.values())
         if only_acting:
-            active_ids = {c.real_estate_id for c in self.contracts.values() if c.acting}
-            agencies = [a for a in agencies if a.id in active_ids]
-            
-        numbered_data = [
-            [i+1, a.name, a.cnpj, a.address, a.commission, format_phone(a.phone)]
-            for i, a in enumerate(agencies)
-        ]
+            real_states = self.get_active_real_estates().values()
         
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Nome", "CNPJ", "Endereço", "Comissão", "Telefone"],
-            showindex=False
-        ))
+        visualization.show_real_estates(real_states)
 
-    def show_extracts(self):
-        print("\n-- EXTRATOS --")
+    def show_extracts(self, only_acting=False):
         extracts = list(self.extracts.values())
-        
-        numbered_data = []
-        for i, e in enumerate(extracts):
-            contract = self.find_contract_by_id(e.contract_id)
-            numbered_data.append([
-                i + 1,
-                self.find_tenant_by_id(contract.tenant_id).name,
-                self.find_real_estate_by_id(contract.real_estate_id).name,
-                self.find_property_by_id(contract.property_id).property_name,
-                e.month_ref,
-                e.year_ref,
-                e.rent_amount,
-                e.iptu,
-                e.water,
-                e.agreement,
-                e.receipt_path
-            ])
-        
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Inquilino", " Imobiliária", "Imóvel", "Mês", "Ano", "Aluguel", "IPTU", "Água", "Acordo", "Comprovante"],
-            showindex=False
-        ))
+        if only_acting:
+            extracts = self.get_active_extracts()
+        visualization.show_extracts(extracts, self.find_contract_by_id, self.find_tenant_by_id, self.find_property_by_id, self.find_real_estate_by_id)
 
-    def show_guarantors(self):
-        print("\n-- FIADORES --")
+    def show_guarantors(self, only_acting=False):
         guarantors = list(self.guarantors.values())
-        
-        numbered_data = [
-            [i+1, g.name, g.cpf, g.cnpj] 
-            for i, g in enumerate(guarantors)
-        ]
-        
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Nome", "CPF", "CNPJ"],
-            showindex=False
-        ))
+        if only_acting:
+            guarantors = self.get_active_guarantors().values()
+        visualization.show_guarantors(guarantors)
 
-    def show_bail_insurances(self):
-        print("\n-- SEGUROS DE CAUÇÃO --")
+    def show_bail_insurances(self, only_acting=False):
         bail_insurances = list(self.bail_insurances.values())
-        
-        numbered_data = [
-            [i+1, b.insurance_company, b.value, b.vality] 
-            for i, b in enumerate(bail_insurances)
-        ]
-        
-        print(tabulate(
-            numbered_data,
-            headers=["#", "Seguradora", "Valor", "Validade"],
-            showindex=False
-        ))
+        if only_acting:
+            bail_insurances = self.get_active_bail_insurances().values()
+        visualization.show_bail_insurances(bail_insurances)

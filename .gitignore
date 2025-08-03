@@ -1,0 +1,18 @@
+# Ignorar tudo dentro da pasta data
+/data/*
+
+# Exceto o marcador de pasta
+!/data/.gitkeep
+
+# Ignorar __pycache__ e arquivos compilados
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos temporários de sistema
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

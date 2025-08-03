@@ -1,8 +1,6 @@
 # rental/contract.py
 import uuid
 
-
-##"id", "guarantee", "rental_deposit", "guarantee_id" ,"rent_amount", "room_name" , "property_id", "tenant_id", "real_estate_id", "acting", "file_path" 
 class Contract:
     def __init__(self, guarantee, rental_deposit, rent_amount,  room_name, property_id, tenant_id, real_estate_id, guarantee_id=None, file_path=None, acting=True):
         self.id = str(uuid.uuid4())

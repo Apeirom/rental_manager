@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime, timedelta
 
 class BailInsurance:
     def __init__(self, value, insurance_company, vality):

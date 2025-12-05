@@ -1,0 +1,25 @@
+{% for t in tenants %}
+<tr class="fade-in"> <td class="fw-bold">{{ t.name }}</td>
+    <td>{{ t.cpf or '-' }}</td>
+    <td>{{ t.cnpj or '-' }}</td>
+    <td class="text-end pe-3">
+        <a href="/inquilinos/editar/{{ t.id }}" class="btn btn-sm btn-outline-secondary" title="Editar">
+            <i class="fas fa-pencil-alt"></i>
+        </a>
+        
+        <button class="btn btn-sm btn-outline-danger"
+                hx-post="/inquilinos/remover/{{ t.id }}"
+                hx-confirm="Tem certeza que deseja remover {{ t.name }}?"
+                hx-target="closest tr"
+                hx-swap="outerHTML swap:1s">
+            <i class="fas fa-trash"></i>
+        </button>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="4" class="text-center text-muted py-4">
+        Nenhum inquilino encontrado.
+    </td>
+</tr>
+{% endfor %}

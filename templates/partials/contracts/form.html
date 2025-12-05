@@ -1,0 +1,72 @@
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-6">Criar Contrato de Locação</h2>
+    
+    <form hx-post="/contracts" hx-target="#main-content" enctype="multipart/form-data">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-bold mb-1">Inquilino</label>
+                <select name="tenant_id" required class="w-full px-3 py-2 border rounded bg-white">
+                    <option value="">Selecione...</option>
+                    {% for id, t in tenants.items() %}
+                    <option value="{{ id }}">{{ t.name }} - {{ t.cpf }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">Imóvel</label>
+                <select name="property_id" required class="w-full px-3 py-2 border rounded bg-white">
+                    <option value="">Selecione...</option>
+                    {% for id, p in properties.items() %}
+                    <option value="{{ id }}">{{ p.property_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-bold mb-1">Agência / Imobiliária</label>
+            <select name="real_estate_id" required class="w-full px-3 py-2 border rounded bg-white">
+                <option value="">Selecione...</option>
+                {% for id, a in agencies.items() %}
+                <option value="{{ id }}">{{ a.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-bold mb-1">Valor Aluguel (R$)</label>
+                <input type="number" step="0.01" name="rent_amount" required class="w-full px-3 py-2 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">Depósito / Caução</label>
+                <input type="number" step="0.01" name="rental_deposit" value="0" class="w-full px-3 py-2 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">Nome do Quarto</label>
+                <input type="text" name="room_name" placeholder="Ex: Suite 01" class="w-full px-3 py-2 border rounded">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-bold mb-1">Tipo de Garantia</label>
+            <select name="guarantee" class="w-full px-3 py-2 border rounded bg-white">
+                <option value="caucao">Caução</option>
+                <option value="fiador">Fiador</option>
+                <option value="seguro_fianca">Seguro Fiança</option>
+            </select>
+            <input type="text" name="guarantee_id" placeholder="ID da Garantia (Opcional)" class="mt-2 w-full px-3 py-2 border rounded text-sm">
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-bold mb-1">Arquivo do Contrato (PDF)</label>
+            <input type="file" name="file_path" class="w-full text-sm text-gray-500">
+        </div>
+
+        <div class="flex justify-end gap-3">
+            <button type="button" hx-get="/contracts" hx-target="#main-content" class="px-4 py-2 border rounded">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Criar Contrato</button>
+        </div>
+    </form>
+</div>

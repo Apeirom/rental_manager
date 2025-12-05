@@ -1,0 +1,46 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Contratos Ativos</h2>
+        <button hx-get="/contracts/new" hx-target="#main-content" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+            + Novo Contrato
+        </button>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left">Imóvel / Quarto</th>
+                    <th class="px-4 py-2 text-left">Inquilino</th>
+                    <th class="px-4 py-2 text-right">Aluguel</th>
+                    <th class="px-4 py-2 text-center">Garantia</th>
+                    <th class="px-4 py-2 text-center">Status</th>
+                    <th class="px-4 py-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contract in contracts %}
+                <tr class="border-b">
+                    <td class="px-4 py-2">
+                        <div class="font-bold">{{ contract.property_id }}</div> <div class="text-xs text-gray-500">{{ contract.room_name }}</div>
+                    </td>
+                    <td class="px-4 py-2">{{ contract.tenant_id }}</td> <td class="px-4 py-2 text-right">R$ {{ contract.rent_amount }}</td>
+                    <td class="px-4 py-2 text-center">
+                        <span class="px-2 py-1 bg-gray-100 rounded text-xs">{{ contract.guarantee }}</span>
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        {% if contract.acting %}
+                        <span class="text-green-600 font-bold text-xs">ATIVO</span>
+                        {% else %}
+                        <span class="text-red-500 text-xs">INATIVO</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2 text-right">
+                        <button hx-delete="/contracts/{{ contract.id }}" hx-target="#main-content" class="text-red-500 hover:underline">Encerrar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

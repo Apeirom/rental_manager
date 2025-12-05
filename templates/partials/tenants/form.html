@@ -1,0 +1,25 @@
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-4">Novo Inquilino</h2>
+    
+    <form hx-post="/tenants" hx-target="#main-content">
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Nome Completo</label>
+            <input type="text" name="name" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">CPF</label>
+            <input type="text" name="cpf" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2">CNPJ (Opcional)</label>
+            <input type="text" name="cnpj" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="flex justify-between">
+            <button type="button" hx-get="/tenants" hx-target="#main-content" class="text-gray-600 hover:text-gray-800">Cancelar</button>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Salvar</button>
+        </div>
+    </form>
+</div>

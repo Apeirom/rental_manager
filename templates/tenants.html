@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-users"></i> Meus Inquilinos</h2>
+    <a href="/inquilinos/novo" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Novo Inquilino
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white p-3">
+        <input type="text" 
+               name="q" 
+               class="form-control" 
+               placeholder="🔍 Buscar inquilino por nome ou CPF..."
+               hx-get="/inquilinos/buscar" 
+               hx-trigger="keyup changed delay:500ms" 
+               hx-target="#tabela-rows">
+    </div>
+    
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>CNPJ</th>
+                        <th class="text-end pe-4">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-rows">
+                    {% include 'partials/tenant_rows.html' %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

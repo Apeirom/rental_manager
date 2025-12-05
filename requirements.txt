@@ -1,5 +1,3 @@
+flask
 pandas
 openpyxl
-tabulate
-uuid
-datetime

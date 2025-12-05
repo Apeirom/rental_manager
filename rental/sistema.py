@@ -10,7 +10,6 @@ from rental.bail_insurance import BailInsurance
 
 from utils.numbersProcessing import format_phone
 from utils.dateProcessing import iso_para_formatado
-from utils import visualization
 
 class RentalSystem:
     def __init__(self, data_folder):
@@ -201,56 +200,3 @@ class RentalSystem:
                     if c.acting and hasattr(c, 'bail_insurance_id') and c.bail_insurance_id}
         return {id_: b for id_, b in self.bail_insurances.items() if id_ in active_ids}
     
-    # ===============================
-    # Métodos de visualização
-    # ===============================
-
-    def show_tenants(self, only_acting=False):
-        tenants = list(self.tenants.values())
-        if only_acting:
-            tenants = self.get_active_tenants().values()
-        visualization.show_tenants(tenants)
-
-    def show_properties(self, only_acting=False):
-        properties = list(self.properties.values())
-        if only_acting:
-            properties = self.get_active_properties().values()
-        visualization.show_properties(properties)
-
-    def show_contracts(self, only_acting=False):
-        contracts = list(self.contracts.values())
-        if only_acting:
-            contracts = self.get_active_contracts()
-            
-        visualization.show_contracts(contracts, self.find_tenant_by_id, self.find_real_estate_by_id, self.find_property_by_id)
-
-    def show_payments(self, only_acting=False):
-        payments = list(self.payments.values())
-        if only_acting:
-            payments = self.get_active_payments()
-        visualization.show_payments(payments, self.find_tenant_by_id, self.find_property_by_id, self.find_real_estate_by_id)
-
-    def show_real_states(self, only_acting=False):
-        real_states = list(self.agencies.values())
-        if only_acting:
-            real_states = self.get_active_real_estates().values()
-        
-        visualization.show_real_estates(real_states)
-
-    def show_extracts(self, only_acting=False):
-        extracts = list(self.extracts.values())
-        if only_acting:
-            extracts = self.get_active_extracts()
-        visualization.show_extracts(extracts, self.find_contract_by_id, self.find_tenant_by_id, self.find_property_by_id, self.find_real_estate_by_id)
-
-    def show_guarantors(self, only_acting=False):
-        guarantors = list(self.guarantors.values())
-        if only_acting:
-            guarantors = self.get_active_guarantors().values()
-        visualization.show_guarantors(guarantors)
-
-    def show_bail_insurances(self, only_acting=False):
-        bail_insurances = list(self.bail_insurances.values())
-        if only_acting:
-            bail_insurances = self.get_active_bail_insurances().values()
-        visualization.show_bail_insurances(bail_insurances)

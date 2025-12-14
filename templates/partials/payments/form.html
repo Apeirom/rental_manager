@@ -1,0 +1,36 @@
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-4">Registrar Pagamento</h2>
+    
+    <form hx-post="/payments" hx-target="#main-content">
+        <div class="mb-3">
+            <label class="block text-sm font-bold">Contrato</label>
+            <select name="contract_id" required class="w-full border rounded p-2 bg-white">
+                <option value="">Selecione o contrato...</option>
+                
+                {% for c_id, c in contracts.items() %}
+                    {% set t_name = tenants[c.tenant_id].name if c.tenant_id in tenants else 'Desc. ' %}
+                    {% set p_name = properties[c.property_id].property_name if c.property_id in properties else 'Desc.' %}
+                    
+                    <option value="{{ c_id }}">
+                        {{ t_name }} - {{ p_name }} ({{ c.room_name }}) - R$ {{ c.rent_amount }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-3">
+            <div><label class="block text-sm font-bold">Mês</label><input type="number" min="1" max="12" name="month_ref" required class="w-full border rounded p-2"></div>
+            <div><label class="block text-sm font-bold">Ano</label><input type="number" name="year_ref" required class="w-full border rounded p-2"></div>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-bold">Caminho/URL do Comprovante</label>
+            <input type="text" name="receipt_path" class="w-full border rounded p-2">
+        </div>
+        
+        <div class="flex justify-end gap-2">
+            <button type="button" hx-get="/payments" hx-target="#main-content" class="border px-4 py-2 rounded">Cancelar</button>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Salvar</button>
+        </div>
+    </form>
+</div>

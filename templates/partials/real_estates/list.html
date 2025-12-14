@@ -1,0 +1,34 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Imobiliárias</h2>
+        <button hx-get="/real_estates/new" hx-target="#main-content" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Nova Imobiliária</button>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left">Nome</th>
+                    <th class="px-4 py-2 text-left">CNPJ</th>
+                    <th class="px-4 py-2 text-left">Comissão</th>
+                    <th class="px-4 py-2 text-left">Telefone</th>
+                    <th class="px-4 py-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, ag in agencies.items() %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-2 font-medium">{{ ag.name }}</td>
+                    <td class="px-4 py-2">{{ ag.cnpj }}</td>
+                    <td class="px-4 py-2">{{ ag.commission }}</td>
+                    <td class="px-4 py-2">{{ ag.phone }}</td>
+                    <td class="px-4 py-2 text-right">
+                        <button hx-delete="/real_estates/{{ id }}" hx-confirm="Apagar?" hx-target="#main-content" class="text-red-500 hover:text-red-700">Excluir</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Nenhuma imobiliária cadastrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

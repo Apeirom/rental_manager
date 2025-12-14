@@ -1,0 +1,83 @@
+<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-6 border-b pb-2">
+        <h2 class="text-xl font-bold text-gray-800">
+            {% if extract %} Editar Extrato {% else %} Gerar Novo Extrato {% endif %}
+        </h2>
+        {% if extract %}
+        <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Modo Edição</span>
+        {% endif %}
+    </div>
+
+    <form hx-post="{% if extract %}/extracts/edit/{{ extract.id }}{% else %}/extracts{% endif %}" 
+          hx-target="#main-content">
+        
+        <div class="mb-3">
+            <label class="block text-sm font-bold mb-1">Contrato</label>
+            <select name="contract_id" required class="w-full border rounded p-2 bg-white">
+                <option value="">Selecione o contrato...</option>
+                
+                {% for c_id, c in contracts.items() %}
+                    {% set t_name = tenants[c.tenant_id].name if c.tenant_id in tenants else 'Desc. ' %}
+                    {% set p_name = properties[c.property_id].property_name if c.property_id in properties else 'Desc.' %}
+                    
+                    <option value="{{ c_id }}" {% if extract and extract.contract_id == c_id %}selected{% endif %}>
+                        {{ t_name }} - {{ p_name }} ({{ c.room_name }}) - R$ {{ c.rent_amount }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-3">
+            <div>
+                <label class="block text-sm font-bold mb-1">Mês</label>
+                <input type="number" min="1" max="12" name="month_ref" 
+                       value="{{ extract.month_ref if extract else '' }}"
+                       required class="w-full border rounded p-2">
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">Ano</label>
+                <input type="number" name="year_ref" 
+                       value="{{ extract.year_ref if extract else '' }}"
+                       required class="w-full border rounded p-2">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mb-3">
+            <div>
+                <label class="block text-sm font-bold mb-1">Aluguel (R$)</label>
+                <input type="number" step="0.01" name="rent_amount" 
+                       value="{{ extract.rent_amount if extract else '' }}"
+                       required class="w-full border rounded p-2">
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">IPTU (R$)</label>
+                <input type="number" step="0.01" name="iptu" 
+                       value="{{ extract.iptu if extract else '0' }}"
+                       class="w-full border rounded p-2">
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">Água (R$)</label>
+                <input type="number" step="0.01" name="water" 
+                       value="{{ extract.water if extract else '0' }}"
+                       class="w-full border rounded p-2">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-bold mb-1">Valor de Acordo Extra (R$)</label>
+            <input type="number" step="0.01" name="agreement" 
+                   value="{{ extract.agreement if extract else '0' }}"
+                   class="w-full border rounded p-2">
+            <p class="text-xs text-gray-500 mt-1">Insira aqui valores acordados fora do aluguel padrão.</p>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+            <button type="button" hx-get="/extracts" hx-target="#main-content" class="px-4 py-2 border rounded hover:bg-gray-100 text-gray-700">
+                Cancelar
+            </button>
+            <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 font-medium">
+                {% if extract %} Salvar Alterações {% else %} Gerar Extrato {% endif %}
+            </button>
+        </div>
+    </form>
+</div>

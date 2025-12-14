@@ -1,0 +1,18 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Seguros Fiança</h2>
+        <button hx-get="/bail_insurances/new" hx-target="#main-content" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Novo Seguro</button>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+        {% for id, b in bail_insurances.items() %}
+        <div class="border p-4 rounded bg-gray-50 relative">
+            <h3 class="font-bold">{{ b.insurance_company }}</h3>
+            <p class="text-green-600 font-mono">Valor: R$ {{ b.value }}</p>
+            <p class="text-sm text-gray-500">Validade: {{ b.vality }}</p>
+            <button hx-delete="/bail_insurances/{{ id }}" hx-confirm="Apagar?" hx-target="#main-content" class="absolute top-4 right-4 text-red-500 text-xs">Excluir</button>
+        </div>
+        {% else %}
+        <p class="text-gray-500">Nenhum seguro cadastrado.</p>
+        {% endfor %}
+    </div>
+</div>

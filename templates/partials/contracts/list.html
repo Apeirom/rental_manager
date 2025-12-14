@@ -12,33 +12,44 @@
                 <tr>
                     <th class="px-4 py-2 text-left">Imóvel / Quarto</th>
                     <th class="px-4 py-2 text-left">Inquilino</th>
-                    <th class="px-4 py-2 text-right">Aluguel</th>
+                    <th class="px-4 py-2 text-left">Imobiliária</th>
+                    <th class="px-4 py-2 text-right">Valores</th>
                     <th class="px-4 py-2 text-center">Garantia</th>
-                    <th class="px-4 py-2 text-center">Status</th>
                     <th class="px-4 py-2"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for contract in contracts %}
-                <tr class="border-b">
+                {% set prop = properties.get(contract.property_id) %}
+                {% set tenant = tenants.get(contract.tenant_id) %}
+                {% set agency = agencies.get(contract.real_estate_id) %}
+                
+                <tr class="border-b hover:bg-gray-50">
                     <td class="px-4 py-2">
-                        <div class="font-bold">{{ contract.property_id }}</div> <div class="text-xs text-gray-500">{{ contract.room_name }}</div>
+                        <div class="font-bold">{{ prop.property_name if prop else contract.property_id }}</div>
+                        <div class="text-xs text-gray-500">{{ contract.room_name }}</div>
                     </td>
-                    <td class="px-4 py-2">{{ contract.tenant_id }}</td> <td class="px-4 py-2 text-right">R$ {{ contract.rent_amount }}</td>
-                    <td class="px-4 py-2 text-center">
-                        <span class="px-2 py-1 bg-gray-100 rounded text-xs">{{ contract.guarantee }}</span>
+                    <td class="px-4 py-2">
+                        <div class="font-medium">{{ tenant.name if tenant else contract.tenant_id }}</div>
                     </td>
-                    <td class="px-4 py-2 text-center">
-                        {% if contract.acting %}
-                        <span class="text-green-600 font-bold text-xs">ATIVO</span>
-                        {% else %}
-                        <span class="text-red-500 text-xs">INATIVO</span>
-                        {% endif %}
+                    <td class="px-4 py-2 text-xs text-gray-600">
+                        {{ agency.name if agency else '-' }}
                     </td>
                     <td class="px-4 py-2 text-right">
-                        <button hx-delete="/contracts/{{ contract.id }}" hx-target="#main-content" class="text-red-500 hover:underline">Encerrar</button>
+                        <div class="font-bold">Aluguel: R$ {{ contract.rent_amount }}</div>
+                        <div class="text-xs text-gray-500">Caução: R$ {{ contract.rental_deposit }}</div>
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        <span class="px-2 py-1 bg-gray-100 rounded text-xs border border-gray-200">
+                            {{ contract.guarantee }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-2 text-right">
+                        <button hx-delete="/contracts/{{ contract.id }}" hx-target="#main-content" class="text-red-500 hover:text-red-700 font-medium text-xs">Encerrar</button>
                     </td>
                 </tr>
+                {% else %}
+                <tr><td colspan="6" class="p-4 text-center text-gray-500">Nenhum contrato ativo.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

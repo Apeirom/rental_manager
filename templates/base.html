@@ -35,7 +35,7 @@
     <nav class="navbar navbar-expand navbar-dark bg-dark mb-4 shadow">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">
-                🏠 Sistema Aluguel
+                🏠 Rental Manager
             </a>
 
             <ul class="navbar-nav ms-auto align-items-center flex-row gap-3">
@@ -76,6 +76,24 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link text-white cursor-pointer" 
+                       hx-get="/payments" 
+                       hx-target="#main-content" 
+                       hx-push-url="/pagamentos">
+                       Pagamentos
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white cursor-pointer" 
+                       hx-get="/extracts" 
+                       hx-target="#main-content" 
+                       hx-push-url="/extratos">
+                       Extratos
+                    </a>
+                </li>
+
+                <li class="nav-item ms-2">
                     <a class="btn btn-warning btn-sm fw-bold px-3" href="/salvar">
                         <i class="fas fa-save"></i> Salvar
                     </a>
@@ -104,6 +122,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/contracts.js') }}"></script>
 
     <script>
       document.body.addEventListener('htmx:configRequest', event => {

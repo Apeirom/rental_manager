@@ -1,44 +1,60 @@
 <div class="p-6 bg-white rounded-lg shadow-md">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-800">Inquilinos</h2>
-        <button hx-get="/tenants/new" 
-                hx-target="#main-content" 
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            + Novo Inquilino
-        </button>
-    </div>
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold text-gray-800">Gerenciar Inquilinos</h2>
+    <button
+      hx-get="/tenants/new"
+      hx-target="#main-content"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      + Novo Inquilino
+    </button>
+  </div>
 
-    <div class="overflow-x-auto">
-        <table class="min-w-full table-auto">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-2 text-left">Nome</th>
-                    <th class="px-4 py-2 text-left">CPF</th>
-                    <th class="px-4 py-2 text-left">CNPJ</th>
-                    <th class="px-4 py-2 text-center">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for id, tenant in tenants.items() %}
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-2">{{ tenant.name }}</td>
-                    <td class="px-4 py-2">{{ tenant.cpf or '-' }}</td>
-                    <td class="px-4 py-2">{{ tenant.cnpj or '-' }}</td>
-                    <td class="px-4 py-2 text-center">
-                        <button hx-delete="/tenants/{{ id }}" 
-                                hx-confirm="Tem certeza?"
-                                hx-target="#main-content"
-                                class="text-red-600 hover:text-red-800">
-                            Excluir
-                        </button>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="4" class="px-4 py-4 text-center text-gray-500">Nenhum inquilino cadastrado.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2 text-left">Nome</th>
+          <th class="px-4 py-2 text-left">CPF</th>
+          <th class="px-4 py-2 text-left">CNPJ</th>
+          <th class="px-4 py-2 text-right">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for id, tenant in tenants.items() %}
+        <tr class="border-b hover:bg-gray-50 transition">
+          <td class="px-4 py-2 font-bold text-gray-800">{{ tenant.name }}</td>
+          <td class="px-4 py-2 text-gray-600">{{ tenant.cpf or '-' }}</td>
+          <td class="px-4 py-2 text-gray-600">{{ tenant.cnpj or '-' }}</td>
+          <td class="px-4 py-2 text-right">
+            <button
+              hx-get="/tenants/edit/{{ id }}"
+              hx-target="#main-content"
+              class="text-blue-600 hover:text-blue-800 mr-3"
+              title="Editar"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+
+            <button
+              hx-delete="/tenants/{{ id }}"
+              hx-confirm="Tem certeza que deseja excluir este inquilino?"
+              hx-target="#main-content"
+              class="text-red-500 hover:text-red-700"
+              title="Excluir"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+            Nenhum inquilino cadastrado. Clique em "+ Novo Inquilino".
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>

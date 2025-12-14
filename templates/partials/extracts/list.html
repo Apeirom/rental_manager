@@ -1,0 +1,93 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold text-gray-800">Extratos Financeiros</h2>
+    <button
+      hx-get="/extracts/new"
+      hx-target="#main-content"
+      class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+    >
+      Gerar Extrato
+    </button>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2 text-left">Período</th>
+          <th class="px-4 py-2 text-left">Inquilino / Imóvel</th>
+          <th class="px-4 py-2 text-right">Aluguel</th>
+          <th class="px-4 py-2 text-right">IPTU</th>
+          <th class="px-4 py-2 text-right">Água</th>
+          <th class="px-4 py-2 text-right">Acordo</th>
+          <th class="px-4 py-2 text-right">Total</th>
+          <th class="px-4 py-2 text-right">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for id, e in extracts.items() %} {% set contract =
+        contracts.get(e.contract_id) %} {% set tenant =
+        tenants.get(contract.tenant_id) if contract else None %} {% set prop =
+        properties.get(contract.property_id) if contract else None %}
+
+        <tr class="border-b hover:bg-gray-50 transition">
+          <td class="px-4 py-2 font-bold">
+            {{ e.month_ref }}/{{ e.year_ref }}
+          </td>
+          <td class="px-4 py-2">
+            <div class="font-bold text-gray-800">
+              {{ tenant.name if tenant else '---' }}
+            </div>
+            <div class="text-xs text-gray-500">
+              {{ prop.property_name if prop else '---' }} - {{
+              contract.room_name if contract else '' }}
+            </div>
+          </td>
+          <td class="px-4 py-2 text-right">R$ {{ e.rent_amount }}</td>
+          <td class="px-4 py-2 text-right text-gray-600">
+            R$ {{ e.iptu or 0 }}
+          </td>
+          <td class="px-4 py-2 text-right text-blue-600">
+            R$ {{ e.water or 0 }}
+          </td>
+
+          <td class="px-4 py-2 text-right text-orange-600 font-medium">
+            R$ {{ e.agreement or 0 }}
+          </td>
+
+          <td class="px-4 py-2 text-right font-bold text-green-700">
+            R$ {{ (e.rent_amount or 0) + (e.iptu or 0) + (e.water or 0) +
+            (e.agreement or 0) }}
+          </td>
+
+          <td class="px-4 py-2 text-right">
+            <button
+              hx-get="/extracts/edit/{{ id }}"
+              hx-target="#main-content"
+              class="text-blue-600 hover:text-blue-800 mr-3"
+              title="Editar"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+
+            <button
+              hx-delete="/extracts/{{ id }}"
+              hx-confirm="Tem certeza que deseja apagar este extrato?"
+              hx-target="#main-content"
+              class="text-red-500 hover:text-red-700"
+              title="Excluir"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+            Nenhum extrato gerado.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

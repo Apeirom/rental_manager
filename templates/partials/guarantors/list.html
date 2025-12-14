@@ -1,0 +1,19 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">Fiadores</h2>
+        <button hx-get="/guarantors/new" hx-target="#main-content" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Novo Fiador</button>
+    </div>
+    <ul class="divide-y">
+        {% for id, g in guarantors.items() %}
+        <li class="py-3 flex justify-between items-center">
+            <div>
+                <p class="font-bold">{{ g.name }}</p>
+                <p class="text-sm text-gray-500">CPF: {{ g.cpf or '-' }} | CNPJ: {{ g.cnpj or '-' }}</p>
+            </div>
+            <button hx-delete="/guarantors/{{ id }}" hx-confirm="Apagar?" hx-target="#main-content" class="text-red-500 text-sm">Remover</button>
+        </li>
+        {% else %}
+        <li class="py-4 text-center text-gray-500">Nenhum fiador cadastrado.</li>
+        {% endfor %}
+    </ul>
+</div>
